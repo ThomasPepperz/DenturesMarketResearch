@@ -1,0 +1,284 @@
+---
+output:
+  pdf_document:
+    citation_package: natbib
+    keep_tex: true
+    fig_caption: true
+    latex_engine: pdflatex
+    template: ~/Sentencing/svm.latex.ms.tex
+title: "Dentures Market Research"
+thanks: "https://www.SouthernAnalytica.com"
+author:
+- name: Thomas A. Pepperz
+  affiliation: Southern Analytica LLC
+abstract: "The following report overviews Google search engine keyword trends related to the dentures market in the United States."
+keywords: "Dentures, Dentistry"
+date: "‘r format(Sys.time(), ’%B %d, %Y’)‘"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+# spacing: double
+bibliography: ~/dentures/report/master.bib
+biblio-style: apsr
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev = 'cairo_pdf')
+options(tinytex.verbose = TRUE)
+# Set up working directory
+setwd("~")
+setwd("dentures")
+
+# Load required libraries
+library(dplyr)
+library(gtrendsR)
+library(reshape2)
+library(stargazer)
+library(tinytex)
+library(knitr)
+```
+
+## Keyword Trends in the U.S.
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r, include=FALSE, echo=FALSE}
+# Query for "dentures": world
+dentures_trends_world = 
+  gtrends(
+    keyword =
+      c(
+        "dentures"),
+    geo = 
+      "",
+    time = 
+      "2009-01-01 2019-10-15",
+    gprop = 
+      c(
+        "web", 
+        "news",
+        "images",
+        "froogle",
+        "youtube"
+      ),
+    category = 
+      0,
+    hl = 
+      "en-US",
+    low_search_volume = 
+      TRUE,
+    onlyInterest = 
+      FALSE
+  )
+
+dentures_trends_us = 
+  gtrends(
+    keyword =
+      c(
+        "dentures"),
+    geo = 
+      "US",
+    time = 
+      "2009-01-01 2019-10-15",
+    gprop = 
+      c(
+        "web", 
+        "news",
+        "images",
+        "froogle",
+        "youtube"
+      ),
+    category = 
+      0,
+    hl = 
+      "en-US",
+    low_search_volume = 
+      TRUE,
+    onlyInterest = 
+      FALSE
+  )
+
+# Subset Interest by Country
+dentures_interest_by_country =
+  dentures_trends_world$interest_by_country
+
+# Subset Interest Over Time
+dentures_interest_over_time =
+  dentures_trends_us$interest_over_time
+
+# Subset Interest by DMA
+dentures_interest_by_dma =
+  dentures_trends_us$interest_by_dma
+
+# Subset Interest by City
+dentures_interest_by_city = 
+  dentures_trends_us$interest_by_city
+
+# Subset Interest by Related Topics
+dentures__related_topics =
+  dentures_trends_us$related_topics
+
+# Subset Interest by Related Queries
+dentures_related_queries = 
+  dentures_trends_us$related_queries
+
+
+
+
+#### Modified Tables ####
+
+# Related Queries: Dentures
+dentures_related_queries = 
+  dentures_related_queries %>%
+  select("Related Keywords" = value, 
+         "Hit Index" = subject, 
+         "Keyword Relation Type" = related_queries,
+         "Primary Keyword" = keyword)
+
+# Interest by City: Dentures
+dentures_related_topics = 
+  dentures_related_topics %>%
+  select("Related Keywords" = value, 
+         "Hit Index" = hits, 
+         "Keyword Relation Type" = related_queries,
+         "Primary Keyword" = keyword)
+
+dentures
+
+# Interest by Country: Dentures
+dentures_interest_by_country = 
+  dentures_interest_by_country %>%
+  select("Country" = location, 
+         "Hit Index" = hits, 
+         "Primary Keyword" = keyword)
+
+# Interest by DMA: Dentures
+dentures_interest_by_dma = 
+  dentures_interest_by_dma %>%
+  select("DMA" = location, 
+         "Hit Index" = hits, 
+         "Primary Keyword" = keyword)
+
+# Interest by City: Dentures
+dentures_interest_by_city = 
+  dentures_interest_by_city %>%
+  select("City" = location, 
+         "Hit Index" = hits, 
+         "Primary Keyword" = keyword)
+```
+
+# Keywords Related to "Dentures"
+
+Insert text here
+
+```{r, results = 'asis', echo=FALSE, comment=NA, fig.align = "center", message=FALSE, header = FALSE}
+# Related Queries Table: Dentures
+table1 =
+  dentures_related_queries[1:10,]
+
+kable(table1, caption = "Related Queries to Keyword 'Dentures'", row.names = TRUE)
+```
+
+&nbsp;
+&nbsp;
+
+# Top-10 Countries by Search Interest: "Dentures"
+
+```{r, results = 'asis', echo=FALSE, comment=NA, fig.align = "center", message=FALSE, header = FALSE}
+table2 = 
+  dentures_interest_by_country[1:10,]
+
+kable(table2, caption = "Search Volume by Country (Top-10): 'Dentures'", row.names = TRUE)
+```
+
+&nbsp;
+&nbsp;
+
+# Top-10 Search Interest by Designated Market Area (DMA): Dentures
+
+```{r, results = 'asis', echo=FALSE, comment=NA, fig.align = "center", message=FALSE, header = FALSE}
+# Related Queries Table: Dentures
+table3 =
+  dentures_interest_by_dma[1:10,]
+
+kable(table3, caption = "Search Interest by DMA: 'Dentures'", row.names = TRUE)
+```
+
+&nbsp;
+&nbsp;
+
+# Top-10 Search Interest by City: Dentures
+
+```{r, results = 'asis', echo=FALSE, comment=NA, fig.align = "center", message=FALSE, header = FALSE}
+# Related Queries Table: Dentures
+table4 =
+  dentures_interest_by_city[1:10,]
+
+kable(table4, caption = "Search Interest by City: 'Dentures'", row.names = TRUE)
+```
+
+&nbsp;
+&nbsp;
+
+
+
+
+
+
+
+
+
+# Appendix: Full Tables
+
+# All Related Queries
+
+```{r, results = 'asis', echo=FALSE, comment=NA, fig.align = "center", message=FALSE, header = FALSE}
+# Related Queries Table: Dentures
+table7 =
+  dentures_related_queries
+
+kable(table7, caption = "All Related Queries to Keyword 'Dentures'", row.names = TRUE)
+```
+
+&nbsp;
+&nbsp;
+
+# All Countries by Search Interest: "Dentures"
+
+```{r, results = 'asis', echo=FALSE, comment=NA, fig.align = "center", message=FALSE, header = FALSE}
+table9 = 
+  dentures_interest_by_country[1:10,]
+
+kable(table9, caption = "Search Volume by All Countries: 'Dentures'", row.names = TRUE)
+```
+
+&nbsp;
+&nbsp;
+
+# Search Interest by All Designated Market Areas (DMA): Dentures
+
+```{r, results = 'asis', echo=FALSE, comment=NA, fig.align = "center", message=FALSE, header = FALSE}
+# Related Queries Table: Dentures
+table10 =
+  dentures_interest_by_dma
+
+kable(table10, caption = "Search Interest by All DMA: 'Dentures'", row.names = TRUE)
+```
+
+&nbsp;
+&nbsp;
+
+# Search Interest by All Cities: Dentures
+
+```{r, results = 'asis', echo=FALSE, comment=NA, fig.align = "center", message=FALSE, header = FALSE}
+# Related Queries Table: Dentures
+table11 =
+  dentures_interest_by_city
+
+kable(table11, caption = "Search Interest by All Cities: 'Dentures'", row.names = TRUE)
+```
+
+&nbsp;
+&nbsp;
